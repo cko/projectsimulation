@@ -1,0 +1,23 @@
+version 2
+run General-0-20120821-18:38:13-46968
+attr configname General
+attr datetime 20120821-18:38:13
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars $0=10
+attr iterationvars2 "$0=10, $repetition=0"
+attr measurement $0=10
+attr network Projektsimulation
+attr processid 46968
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+
+scalar Projektsimulation.kunde 	totaltime 	2
+scalar Projektsimulation.kunde 	totaltime 	2
+scalar Projektsimulation.kunde 	totaltime 	10
+scalar Projektsimulation.kunde 	totaltime 	5
+scalar Projektsimulation.kunde 	totaltime 	11
+scalar Projektsimulation.kunde 	totaltime 	8

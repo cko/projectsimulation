@@ -1,0 +1,3 @@
+package projektsimulation;
+
+@license(LGPL);
