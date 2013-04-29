@@ -14,16 +14,14 @@
 // 
 
 #include "project.h"
+#include "ticket_m.h"
 
 Define_Module(Project);
-
-    double probabilityError;
-    bool entwicklerHasFeature;
-    cQueue queue("featurequeue");
 
 void Project::initialize()
 {
     probabilityError = par("probError").doubleValue();
+    queue = new cQueue("featurequeue");
 }
 
 void Project::handleMessage(cMessage *msg) {
@@ -36,29 +34,26 @@ void Project::handleMessage(cMessage *msg) {
         entwicklerHasFeature = false;
     }
 
-
-
-
     if (inEntwicklerGate == 0 && randNumber > probabilityError) {
         send(msg, "outKunde");
-        if (!queue.isEmpty()){
-            cMessage *secondmsg = (cMessage *)queue.pop();
+        if (!queue->isEmpty()){
+            cMessage *secondmsg = (cMessage *)queue->pop();
             entwicklerHasFeature = true;
             send(secondmsg, "outEntwickler");
         }
     } else {
-        queue.insert(msg);
+        queue->insert(msg);
         if (!entwicklerHasFeature) {
-            msg = (cMessage *)queue.pop();
+            msg = (cMessage *)queue->pop();
             entwicklerHasFeature = true;
             send(msg, "outEntwickler");
         }
     }
 
     cDisplayString& connDispStr = getDisplayString();
-    if (queue.isEmpty()){
+    if (queue->isEmpty()){
         connDispStr.parse("p=163,174;i=block/cogwheel,#00FF00");
-    } else if (queue.getLength() < 10){
+    } else if (queue->getLength() < 10){
         connDispStr.parse("p=163,174;i=block/cogwheel,#FFFF00");
     } else {
         connDispStr.parse("p=163,174;i=block/cogwheel,#FF0000");

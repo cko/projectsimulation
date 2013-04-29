@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for Projektsimulation
+# OMNeT++/OMNEST Makefile for Projectsimulation
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep -O out
 #
 
 # Name of target to be created (-o option)
-TARGET = Projektsimulation$(EXE_SUFFIX)
+TARGET = Projectsimulation$(EXE_SUFFIX)
 
 # User interface (uncomment one) (-u option)
 USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(CMDENV_LIBS)
@@ -28,10 +28,11 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc and .msg files
-OBJS = $O/kunde.o $O/entwickler.o $O/project.o
+OBJS = $O/entwickler.o $O/project.o $O/kunde.o $O/ticket_m.o
 
 # Message files
-MSGFILES =
+MSGFILES = \
+    ticket.msg
 
 #------------------------------------------------------------------------------
 
@@ -78,11 +79,12 @@ endif
 
 # Main target
 all: $O/$(TARGET)
-	$(LN) $O/$(TARGET) .
+	$(Q)$(LN) $O/$(TARGET) .
 
 $O/$(TARGET): $(OBJS)  $(wildcard $(EXTRA_OBJS)) Makefile
 	@$(MKPATH) $O
-	$(CXX) $(LDFLAGS) -o $O/$(TARGET)  $(OBJS) $(EXTRA_OBJS) $(AS_NEEDED_OFF) $(WHOLE_ARCHIVE_ON) $(LIBS) $(WHOLE_ARCHIVE_OFF) $(OMNETPP_LIBS)
+	@echo Creating executable: $@
+	$(Q)$(CXX) $(LDFLAGS) -o $O/$(TARGET)  $(OBJS) $(EXTRA_OBJS) $(AS_NEEDED_OFF) $(WHOLE_ARCHIVE_ON) $(LIBS) $(WHOLE_ARCHIVE_OFF) $(OMNETPP_LIBS)
 
 .PHONY: all clean cleanall depend msgheaders
 
@@ -90,30 +92,38 @@ $O/$(TARGET): $(OBJS)  $(wildcard $(EXTRA_OBJS)) Makefile
 
 $O/%.o: %.cc $(COPTS_FILE)
 	@$(MKPATH) $(dir $@)
-	$(CXX) -c $(COPTS) -o $@ $<
+	$(qecho) "$<"
+	$(Q)$(CXX) -c $(COPTS) -o $@ $<
 
 %_m.cc %_m.h: %.msg
-	$(MSGC) -s _m.cc $(MSGCOPTS) $?
+	$(qecho) MSGC: $<
+	$(Q)$(MSGC) -s _m.cc $(MSGCOPTS) $?
 
 msgheaders: $(MSGFILES:.msg=_m.h)
 
 clean:
-	-rm -rf $O
-	-rm -f Projektsimulation Projektsimulation.exe libProjektsimulation.so libProjektsimulation.a libProjektsimulation.dll libProjektsimulation.dylib
-	-rm -f ./*_m.cc ./*_m.h
-	-rm -f results/*_m.cc results/*_m.h
+	$(qecho) Cleaning...
+	$(Q)-rm -rf $O
+	$(Q)-rm -f Projectsimulation Projectsimulation.exe libProjectsimulation.so libProjectsimulation.a libProjectsimulation.dll libProjectsimulation.dylib
+	$(Q)-rm -f ./*_m.cc ./*_m.h
+	$(Q)-rm -f results/*_m.cc results/*_m.h
 
 cleanall: clean
-	-rm -rf $(PROJECT_OUTPUT_DIR)
+	$(Q)-rm -rf $(PROJECT_OUTPUT_DIR)
 
 depend:
-	$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc results/*.cc
+	$(qecho) Creating dependencies...
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc results/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/entwickler.o: entwickler.cc \
 	entwickler.h
 $O/kunde.o: kunde.cc \
-	kunde.h
+	kunde.h \
+	ticket_m.h
 $O/project.o: project.cc \
-	project.h
+	project.h \
+	ticket_m.h
+$O/ticket_m.o: ticket_m.cc \
+	ticket_m.h
 

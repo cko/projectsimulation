@@ -14,6 +14,7 @@
 // 
 
 #include "kunde.h"
+#include "ticket_m.h"
 
 Define_Module(Kunde);
 
@@ -22,12 +23,12 @@ int anzahlFeatures;
 int timeStep = 3;
 
 void Kunde::initialize() {
-    cMessage *firstmsg = new cMessage("Feature");
+    Ticket *firstmsg = new Ticket("Feature");
     firstmsg->addPar("creationTime");
     firstmsg->par("creationTime").setDoubleValue(simTime().dbl());
     send(firstmsg, "out");
 
-    cMessage *secondmsg = new cMessage("Feature");
+    Ticket *secondmsg = new Ticket("Feature");
     secondmsg->addPar("creationTime");
     secondmsg->par("creationTime").setDoubleValue((simTime() + timeStep).dbl());
     scheduleAt(simTime() + timeStep, secondmsg);
@@ -45,8 +46,13 @@ void Kunde::handleMessage(cMessage *msg) {
             //neue Nachrichten in Zeitschritten erzeugen
             send(msg, "out");
             //ev << "Neues Feature verschickt ";
-            cMessage *newmsg = new cMessage(
+            //char numstr[21];
+            //sprintf(numstr, "%d", age);
+            //result = name + numstr;
+
+            Ticket *newmsg = new Ticket(
                     "Feature " + (100 - anzahlFeatures));
+            newmsg->setName("Feature ");
             newmsg->addPar("creationTime");
             newmsg->par("creationTime").setDoubleValue(
                     (simTime() + timeStep).dbl());

@@ -13,23 +13,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __PROJEKTSIMULATION_PROJECT_H_
-#define __PROJEKTSIMULATION_PROJECT_H_
-
-#include <omnetpp.h>
-
-/**
- * TODO - Generated class
- */
-class Project : public cSimpleModule
-{
-    double probabilityError;
-        bool entwicklerHasFeature;
-        cQueue *queue;
-  protected:
-
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-};
-
-#endif
+message Ticket {
+    int countReopened;
+    //string anotherField;
+    //double arrayField1[];
+    //double arrayField2[10];
+}
