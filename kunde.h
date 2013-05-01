@@ -26,7 +26,8 @@ class Kunde : public cSimpleModule
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-    virtual void reopenTicket(cMessage *msg);
+    virtual void checkResolvedTicket(cMessage *msg);
+    virtual void handleSelfMessage(cMessage *msg);
 };
 
 #endif

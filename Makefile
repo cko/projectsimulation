@@ -122,6 +122,7 @@ $O/kunde.o: kunde.cc \
 	kunde.h \
 	ticket_m.h
 $O/project.o: project.cc \
+	entwickler.h \
 	project.h \
 	ticket_m.h
 $O/ticket_m.o: ticket_m.cc \

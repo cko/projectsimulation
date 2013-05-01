@@ -18,60 +18,55 @@
 
 Define_Module(Kunde);
 
-double probabilityRefuse;
+double probabilityReopen;
 int anzahlFeatures;
-int timeStep = 3;
+double mu = 0.5;
 
 void Kunde::initialize() {
-    Ticket *firstmsg = new Ticket("Feature");
-    firstmsg->addPar("creationTime");
-    firstmsg->par("creationTime").setDoubleValue(simTime().dbl());
-    send(firstmsg, "out");
+    cMessage *firstmsg = new cMessage("Time");
+    firstmsg->setKind(5);
+    scheduleAt(simTime() + 1, firstmsg);
 
-    Ticket *secondmsg = new Ticket("Feature");
-    secondmsg->addPar("creationTime");
-    secondmsg->par("creationTime").setDoubleValue((simTime() + timeStep).dbl());
-    scheduleAt(simTime() + timeStep, secondmsg);
-
-    probabilityRefuse = par("probRefuse").doubleValue();
+    probabilityReopen = par("probReopen").doubleValue();
     anzahlFeatures = par("anzahlFeatures").longValue() - 2;
 
 }
 
 void Kunde::handleMessage(cMessage *msg) {
-    //endSimulation();
     if (msg->isSelfMessage()) {
-        //neue Nachrichten in Zeitschritten erzeugen
-        send(msg, "out");
-        //ev << "Neues Feature verschickt ";
-        //int countNewTickets = poisson(1);
-        int countNewTickets = 1;
+        handleSelfMessage(msg);
+    } else {
+        checkResolvedTicket(msg);
+    }
+}
+
+void Kunde::handleSelfMessage(cMessage *msg) {
+    if (msg->getKind() == 5) {
+        int countNewTickets = poisson(mu);
         ev<< simTime() << "  " << countNewTickets << " new  --- ";
         for (int i = 0; i < countNewTickets; i++) {
             Ticket *newmsg = new Ticket("Feature " + (100 - anzahlFeatures));
             newmsg->setName("Feature ");
             newmsg->addPar("creationTime");
-            newmsg->par("creationTime").setDoubleValue(
-                    (simTime() + timeStep).dbl());
-            scheduleAt(simTime() + timeStep, newmsg);
+            newmsg->par("creationTime").setDoubleValue((simTime() + 1).dbl());
+            scheduleAt(simTime() + 1, newmsg);
             anzahlFeatures -= 1;
         }
-        ev<< anzahlFeatures << " verbleibend  ";
+        cMessage *timemsg = new cMessage("Time");
+        timemsg->setKind(5);
+        scheduleAt(simTime() + 1, timemsg);
     } else {
-        reopenTicket(msg);
+        send(msg, "out");
     }
 }
 
-void Kunde::reopenTicket(cMessage *msg) {
+void Kunde::checkResolvedTicket(cMessage *msg) {
     //feature wurde bearbeitet
     //soll Feature nochmal ueberarbeitet werden?
     double randNumber = dblrand();
-    if (randNumber < probabilityRefuse) {
+    if (randNumber < probabilityReopen) {
         send(msg, "out");
     } else {
-        //Anzahl verbleibender Features
-        //ev << "n = " << anzahlFeatures << "\n";
-        //komplette Bearbeitungszeit des features ausgeben
         long totaltime = simTime().dbl()
                 - msg->par("creationTime").doubleValue();
         ev<< totaltime << " ";

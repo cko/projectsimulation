@@ -22,7 +22,7 @@ simple Kunde
 {
     parameters:
         int anzahlFeatures;
-        double probRefuse;
+        double probReopen;
 
         @display("i=abstract/person");
     gates:
