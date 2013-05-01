@@ -39,41 +39,44 @@ void Kunde::initialize() {
 }
 
 void Kunde::handleMessage(cMessage *msg) {
-    if (anzahlFeatures >= 0) {
-        //endSimulation();
-
-        if (msg->isSelfMessage()) {
-            //neue Nachrichten in Zeitschritten erzeugen
-            send(msg, "out");
-            //ev << "Neues Feature verschickt ";
-            //char numstr[21];
-            //sprintf(numstr, "%d", age);
-            //result = name + numstr;
-
-            Ticket *newmsg = new Ticket(
-                    "Feature " + (100 - anzahlFeatures));
+    //endSimulation();
+    if (msg->isSelfMessage()) {
+        //neue Nachrichten in Zeitschritten erzeugen
+        send(msg, "out");
+        //ev << "Neues Feature verschickt ";
+        //int countNewTickets = poisson(1);
+        int countNewTickets = 1;
+        ev<< simTime() << "  " << countNewTickets << " new  --- ";
+        for (int i = 0; i < countNewTickets; i++) {
+            Ticket *newmsg = new Ticket("Feature " + (100 - anzahlFeatures));
             newmsg->setName("Feature ");
             newmsg->addPar("creationTime");
             newmsg->par("creationTime").setDoubleValue(
                     (simTime() + timeStep).dbl());
             scheduleAt(simTime() + timeStep, newmsg);
             anzahlFeatures -= 1;
-        } else {
-            //feature wurde bearbeitet
-            //soll Feature nochmal ueberarbeitet werden?
-            double randNumber = dblrand();
-            if (randNumber < probabilityRefuse) {
-                send(msg, "out");
-            } else {
-                //Anzahl verbleibender Features
-                //ev << "n = " << anzahlFeatures << "\n";
-                //komplette Bearbeitungszeit des features ausgeben
-                long totaltime = simTime().dbl()
-                        - msg->par("creationTime").doubleValue();
-                ev << totaltime << " ";
-                delete (msg);
-                recordScalar("totaltime", totaltime);
-            }
         }
+        ev<< anzahlFeatures << " verbleibend  ";
+    } else {
+        reopenTicket(msg);
     }
 }
+
+void Kunde::reopenTicket(cMessage *msg) {
+    //feature wurde bearbeitet
+    //soll Feature nochmal ueberarbeitet werden?
+    double randNumber = dblrand();
+    if (randNumber < probabilityRefuse) {
+        send(msg, "out");
+    } else {
+        //Anzahl verbleibender Features
+        //ev << "n = " << anzahlFeatures << "\n";
+        //komplette Bearbeitungszeit des features ausgeben
+        long totaltime = simTime().dbl()
+                - msg->par("creationTime").doubleValue();
+        ev<< totaltime << " ";
+        delete (msg);
+        recordScalar("totaltime", totaltime);
+    }
+}
+
