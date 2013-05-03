@@ -17,20 +17,28 @@ package projektsimulation;
 
 network Projektsimulation
 {
+    parameters:
+        int numEntwickler = 4;
     @display("bgb=365,362");
     submodules:
         project: Project {
             @display("p=163,174;i=,#00ff00");
+            gates:
+                inEntwickler[numEntwickler];
+                outEntwickler[numEntwickler];
         }
-        entwickler: Entwickler {
-            @display("p=163,310");
+        entwickler[numEntwickler]: Entwickler {
+            @display("p=163,310,m,10,80");
         }
         kunde: Kunde {
             @display("p=163,27");
         }
     connections:
-        project.outEntwickler --> entwickler.in;
+        for i=0..numEntwickler-1 {
+            project.outEntwickler[i] --> entwickler[i].in;
+            entwickler[i].out --> project.inEntwickler[i];
+        }
+        
         kunde.out --> project.inKunde;
-        entwickler.out --> project.inEntwickler;
         project.outKunde --> kunde.in;
 }

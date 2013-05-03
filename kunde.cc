@@ -19,8 +19,8 @@
 Define_Module(Kunde);
 
 double probabilityReopen;
-int anzahlFeatures;
 double mu = 0.5;
+int anzahl = 0;
 
 void Kunde::initialize() {
     cMessage *firstmsg = new cMessage("Time");
@@ -28,8 +28,6 @@ void Kunde::initialize() {
     scheduleAt(simTime() + 1, firstmsg);
 
     probabilityReopen = par("probReopen").doubleValue();
-    anzahlFeatures = par("anzahlFeatures").longValue() - 2;
-
 }
 
 void Kunde::handleMessage(cMessage *msg) {
@@ -45,12 +43,11 @@ void Kunde::handleSelfMessage(cMessage *msg) {
         int countNewTickets = poisson(mu);
         ev<< simTime() << "  " << countNewTickets << " new  --- ";
         for (int i = 0; i < countNewTickets; i++) {
-            Ticket *newmsg = new Ticket("Feature " + (100 - anzahlFeatures));
+            Ticket *newmsg = new Ticket("Feature " + anzahl++);
             newmsg->setName("Feature ");
             newmsg->addPar("creationTime");
             newmsg->par("creationTime").setDoubleValue((simTime() + 1).dbl());
             scheduleAt(simTime() + 1, newmsg);
-            anzahlFeatures -= 1;
         }
         cMessage *timemsg = new cMessage("Time");
         timemsg->setKind(5);

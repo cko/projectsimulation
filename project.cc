@@ -15,13 +15,29 @@
 
 #include "project.h"
 #include "ticket_m.h"
+#include "entwickler.h"
+#include <ccomponenttype.h>
 
 Define_Module(Project);
 
 void Project::initialize()
 {
     probabilityError = par("probError").doubleValue();
+    //TODO:fill queue with initial Number of Tickets
     queue = new cQueue("featurequeue");
+
+    //TODO: create new Entwickler
+    cModuleType *moduleType = cModuleType::get("projektsimulation.Entwickler");
+    //cModule *mod = moduleType->createScheduleInit("entwickler2", this);
+    //mod->gate("out")->connectTo(this->gate("inEntwickler"));
+    // create (possibly compound) module and build its submodules (if any)
+    cModule *module = moduleType->create("node", this);
+    module->finalizeParameters();
+    module->buildInside();
+    // create activation message
+    module->scheduleStart(simTime());
+    //module->gate("out")->connectTo(this->gate("in2"));
+
 }
 
 void Project::handleMessage(cMessage *msg) {
@@ -39,14 +55,14 @@ void Project::handleMessage(cMessage *msg) {
         if (!queue->isEmpty()){
             cMessage *secondmsg = (cMessage *)queue->pop();
             entwicklerHasFeature = true;
-            send(secondmsg, "outEntwickler");
+            send(secondmsg, "outEntwickler",intrand(4));
         }
     } else {
         queue->insert(msg);
         if (!entwicklerHasFeature) {
             msg = (cMessage *)queue->pop();
             entwicklerHasFeature = true;
-            send(msg, "outEntwickler");
+            send(msg, "outEntwickler",intrand(4));
         }
     }
 

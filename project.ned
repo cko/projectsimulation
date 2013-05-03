@@ -27,6 +27,6 @@ simple Project
     gates:
         input inKunde;
         output outKunde;
-        input inEntwickler;
-        output outEntwickler;
+        input inEntwickler[];
+        output outEntwickler[];
 }
