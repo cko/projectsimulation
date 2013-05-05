@@ -25,7 +25,8 @@ void Project::initialize()
     probabilityError = par("probError").doubleValue();
     //TODO:fill queue with initial Number of Tickets
     queue = new cQueue("featurequeue");
-
+    anzahlEntwickler = par("anzahlEntwickler").longValue();
+    //std::fill_n(entwicklerHasFeature, anzahlEntwickler, false);
     //TODO: create new Entwickler
     cModuleType *moduleType = cModuleType::get("projektsimulation.Entwickler");
     //cModule *mod = moduleType->createScheduleInit("entwickler2", this);
@@ -43,26 +44,37 @@ void Project::initialize()
 void Project::handleMessage(cMessage *msg) {
     double randNumber = dblrand();
     //feature comes from entwickler and has no error
-    int inEntwicklerGate = strcmp("inEntwickler",
-            msg->getArrivalGate()->getName());
+
+    ev<< (msg->getArrivalGate()->getName()) << "  gate --";
+
+
+    int inEntwicklerGate = strcmp("inEntwickler", msg->getArrivalGate()->getName());
+    ev<< (msg->getArrivalGate()->getIndex());
+    int index = -1;
 
     if (inEntwicklerGate == 0){
-        entwicklerHasFeature = false;
+        index = msg->getArrivalGate()->getIndex();
+        entwicklerHasFeature[index] = false;
     }
 
-    if (inEntwicklerGate == 0 && randNumber > probabilityError) {
+
+        if (inEntwicklerGate == 0 && randNumber > probabilityError) {
         send(msg, "outKunde");
-        if (!queue->isEmpty()){
-            cMessage *secondmsg = (cMessage *)queue->pop();
-            entwicklerHasFeature = true;
-            send(secondmsg, "outEntwickler",intrand(4));
+        for (int i = 0; i < anzahlEntwickler; i++) {
+            if (!queue->isEmpty() && !entwicklerHasFeature[i]) {
+                cMessage *secondmsg = (cMessage *) queue->pop();
+                entwicklerHasFeature[i] = true;
+                send(secondmsg, "outEntwickler", i);
+            }
         }
     } else {
         queue->insert(msg);
-        if (!entwicklerHasFeature) {
-            msg = (cMessage *)queue->pop();
-            entwicklerHasFeature = true;
-            send(msg, "outEntwickler",intrand(4));
+        for (int i = 0; i < anzahlEntwickler; i++) {
+            if (!entwicklerHasFeature[i] && !queue->isEmpty()) {
+                msg = (cMessage *) queue->pop();
+                entwicklerHasFeature[i] = true;
+                send(msg, "outEntwickler", i);
+            }
         }
     }
 

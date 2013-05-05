@@ -18,9 +18,6 @@
 
 #include <omnetpp.h>
 
-/**
- * TODO - Generated class
- */
 class Entwickler : public cSimpleModule
 {
   protected:

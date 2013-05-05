@@ -22,6 +22,7 @@ simple Project
 {
     parameters:
         double probError;
+        int anzahlEntwickler;
 
         @display("i=block/cogwheel");
     gates:

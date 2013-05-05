@@ -18,15 +18,15 @@
 
 #include <omnetpp.h>
 
-/**
- * TODO - Generated class
- */
 class Project : public cSimpleModule
 {
+    int anzahlEntwickler;
     double probabilityError;
-        bool entwicklerHasFeature;
-        cQueue *queue;
-  protected:
+    const static int parAnzahlEnt = 4;
+    bool entwicklerHasFeature[parAnzahlEnt];
+    cQueue *queue;
+
+    protected:
 
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

@@ -18,9 +18,6 @@
 
 #include <omnetpp.h>
 
-/**
- * TODO - Generated class
- */
 class Kunde : public cSimpleModule
 {
   protected:
