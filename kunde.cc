@@ -15,14 +15,13 @@
 
 #include "kunde.h"
 #include "ticket_m.h"
+#include <ccomponenttype.h>
 
 Define_Module(Kunde);
 
-double probabilityReopen;
-double mu = 0.5;
-int anzahl = 0;
-
 void Kunde::initialize() {
+    mu = par("mu").doubleValue();
+    anzahl = 0;
     cMessage *firstmsg = new cMessage("Time");
     firstmsg->setKind(5);
     scheduleAt(simTime() + 1, firstmsg);
@@ -41,7 +40,7 @@ void Kunde::handleMessage(cMessage *msg) {
 void Kunde::handleSelfMessage(cMessage *msg) {
     if (msg->getKind() == 5) {
         int countNewTickets = poisson(mu);
-        ev<< simTime() << "  " << countNewTickets << " new  --- ";
+        //ev<< simTime() << "  " << countNewTickets << " new  --- ";
         for (int i = 0; i < countNewTickets; i++) {
             Ticket *newmsg = new Ticket("Feature " + anzahl++);
             newmsg->setName("Feature ");
@@ -66,7 +65,7 @@ void Kunde::checkResolvedTicket(cMessage *msg) {
     } else {
         long totaltime = simTime().dbl()
                 - msg->par("creationTime").doubleValue();
-        ev<< totaltime << " ";
+        //ev<< totaltime << " ";
         delete (msg);
         recordScalar("totaltime", totaltime);
     }

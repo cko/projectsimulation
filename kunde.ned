@@ -15,14 +15,12 @@
 
 package projektsimulation;
 
-//
-// TODO auto-generated module
-//
 simple Kunde
 {
     parameters:
         int anzahlFeatures;
         double probReopen;
+        int mu;
 
         @display("i=abstract/person");
     gates:

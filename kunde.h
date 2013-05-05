@@ -20,6 +20,10 @@
 
 class Kunde : public cSimpleModule
 {
+  double probabilityReopen;
+  double mu;
+  int anzahl;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

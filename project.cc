@@ -26,39 +26,33 @@ void Project::initialize()
     //TODO:fill queue with initial Number of Tickets
     queue = new cQueue("featurequeue");
     anzahlEntwickler = par("anzahlEntwickler").longValue();
-    //std::fill_n(entwicklerHasFeature, anzahlEntwickler, false);
-    //TODO: create new Entwickler
+    entwicklerHasFeature = new bool [anzahlEntwickler];
     cModuleType *moduleType = cModuleType::get("projektsimulation.Entwickler");
-    //cModule *mod = moduleType->createScheduleInit("entwickler2", this);
-    //mod->gate("out")->connectTo(this->gate("inEntwickler"));
-    // create (possibly compound) module and build its submodules (if any)
     cModule *module = moduleType->create("node", this);
     module->finalizeParameters();
     module->buildInside();
     // create activation message
     module->scheduleStart(simTime());
-    //module->gate("out")->connectTo(this->gate("in2"));
-
 }
 
 void Project::handleMessage(cMessage *msg) {
     double randNumber = dblrand();
     //feature comes from entwickler and has no error
 
-    ev<< (msg->getArrivalGate()->getName()) << "  gate --";
+    //ev<< (msg->getArrivalGate()->getName()) << "  gate --";
+    ev<< queue->getLength() << " current Length";
 
-
-    int inEntwicklerGate = strcmp("inEntwickler", msg->getArrivalGate()->getName());
-    ev<< (msg->getArrivalGate()->getIndex());
+    int inEntwicklerGate = strcmp("inEntwickler",
+            msg->getArrivalGate()->getName());
+    //ev<< (msg->getArrivalGate()->getIndex());
     int index = -1;
 
-    if (inEntwicklerGate == 0){
+    if (inEntwicklerGate == 0) {
         index = msg->getArrivalGate()->getIndex();
         entwicklerHasFeature[index] = false;
     }
 
-
-        if (inEntwicklerGate == 0 && randNumber > probabilityError) {
+    if (inEntwicklerGate == 0 && randNumber > probabilityError) {
         send(msg, "outKunde");
         for (int i = 0; i < anzahlEntwickler; i++) {
             if (!queue->isEmpty() && !entwicklerHasFeature[i]) {
@@ -79,9 +73,9 @@ void Project::handleMessage(cMessage *msg) {
     }
 
     cDisplayString& connDispStr = getDisplayString();
-    if (queue->isEmpty()){
+    if (queue->isEmpty()) {
         connDispStr.parse("p=163,174;i=block/cogwheel,#00FF00");
-    } else if (queue->getLength() < 10){
+    } else if (queue->getLength() < 10) {
         connDispStr.parse("p=163,174;i=block/cogwheel,#FFFF00");
     } else {
         connDispStr.parse("p=163,174;i=block/cogwheel,#FF0000");
