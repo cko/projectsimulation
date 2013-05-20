@@ -20,6 +20,8 @@
 
 class Entwickler : public cSimpleModule
 {
+  double mu;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

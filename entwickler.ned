@@ -15,11 +15,10 @@
 
 package projektsimulation;
 
-//
-// TODO auto-generated module
-//
 simple Entwickler
 {
+    parameters:
+        double mu;
         
     @display("i=abstract/penguin");
     gates:

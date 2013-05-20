@@ -27,12 +27,6 @@ void Project::initialize()
     queue = new cQueue("featurequeue");
     anzahlEntwickler = par("anzahlEntwickler").longValue();
     entwicklerHasFeature = new bool [anzahlEntwickler];
-    cModuleType *moduleType = cModuleType::get("projektsimulation.Entwickler");
-    cModule *module = moduleType->create("node", this);
-    module->finalizeParameters();
-    module->buildInside();
-    // create activation message
-    module->scheduleStart(simTime());
 }
 
 void Project::handleMessage(cMessage *msg) {

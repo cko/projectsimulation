@@ -18,7 +18,6 @@ package projektsimulation;
 simple Kunde
 {
     parameters:
-        int anzahlFeatures;
         double probReopen;
         int mu;
 

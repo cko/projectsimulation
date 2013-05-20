@@ -19,11 +19,11 @@ Define_Module(Entwickler);
 
 void Entwickler::initialize()
 {
-    // TODO - Generated method body
+    mu = par("mu").doubleValue();
 }
 
 void Entwickler::handleMessage(cMessage *msg)
 {
-    int duration = 1 + intrand(3);
+    int duration = 1 + poisson(mu);
     sendDelayed(msg, duration, "out");
 }
